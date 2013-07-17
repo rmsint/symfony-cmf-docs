@@ -144,11 +144,14 @@ define the imagine filter you specify in the block. The default name is
     .. code-block:: yaml
 
         # app/config/config.yml
+        cmf_block:
+            imagine: true
+
         liip_imagine:
             # ...
             filter_sets:
                 cmf_block:
-                    data_loader: phpcr
+                    data_loader: cmf_media_doctrine_phpcr
                     quality: 85
                     filters:
                         thumbnail: { size: [616, 419], mode: outbound }
@@ -159,6 +162,12 @@ define the imagine filter you specify in the block. The default name is
         <!-- app/config/config.xml -->
         <?xml version="1.0" encoding="UTF-8" ?>
         <container xmlns="http://symfony.com/schema/dic/services">
+
+            <config xmlns="http://cmf.symfony.com/schema/dic/block"
+                imagine="true"
+            >
+                <!-- ... -->
+            </config>
 
             <config xmlns="http://example.org/dic/schema/liip_imagine">
                 <!-- ... -->
@@ -172,6 +181,11 @@ define the imagine filter you specify in the block. The default name is
     .. code-block:: php
 
         // app/config/config.php
+        $container->loadFromExtension('cmf_block', array(
+            // ..
+            'imagine' => true,
+        ));
+
         $container->loadFromExtension('liip_imagine', array(
             // ...
             'filter_sets' => array(
@@ -218,9 +232,7 @@ of sense::
 
     use Symfony\Cmf\Bundle\BlockBundle\Doctrine\Phpcr\SlideshowBlock;
     use Symfony\Cmf\Bundle\BlockBundle\Doctrine\Phpcr\ImagineBlock;
-    // the Image will be moved to Symfony\Cmf\Bundle\MediaBundle\Model\Image
-    use Doctrine\ODM\PHPCR\Document\Image;
-    use Doctrine\ODM\PHPCR\Document\File;
+    use Symfony\Cmf\Bundle\MediaBundle\Doctrine\Phpcr\Image;
 
     // create slideshow
     $mySlideshow = new SlideshowBlock();
@@ -236,10 +248,8 @@ of sense::
     $mySlideshowItem->setParentDocument($mySlideshow);
     $manager->persist($mySlideshowItem);
 
-    $file = new File();
-    $file->setFileContentFromFilesystem('path/to/my/image.jpg');
     $image = new Image();
-    $image->setFile($file);
+    $image->setFileContentFromFilesystem('path/to/my/image.jpg');
     $mySlideshowItem->setImage($image);
 
 Render the slideshow
